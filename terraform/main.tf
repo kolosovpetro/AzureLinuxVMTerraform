@@ -44,13 +44,13 @@ resource "azurerm_network_security_group" "public" {
 
   # RDP
   security_rule {
-    name                       = "AllowRDP"
+    name                       = "AllowSSH"
     priority                   = 1000
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "*"
     source_port_range          = "*"
-    destination_port_range     = "3389"
+    destination_port_range     = "22"
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
@@ -98,65 +98,30 @@ resource "azurerm_virtual_machine" "public" {
   delete_os_disk_on_termination = true
 
   storage_image_reference {
-    publisher = var.storage_image_reference_publisher # MicrosoftWindowsServer
-    offer     = var.storage_image_reference_offer     # WindowsServer
-    sku       = var.storage_image_reference_sku       # 2022-Datacenter
-    version   = var.storage_image_reference_version   # latest
+    publisher = var.storage_image_reference_publisher
+    offer     = var.storage_image_reference_offer
+    sku       = var.storage_image_reference_sku
+    version   = var.storage_image_reference_version
   }
 
   storage_os_disk {
-    name              = "${var.storage_os_disk_name}-${var.prefix}" # osdisk-prefix
-    caching           = var.storage_os_disk_caching                 # ReadWrite
-    create_option     = var.storage_os_disk_create_option           # FromImage
-    managed_disk_type = var.storage_os_disk_managed_disk_type       # StandardSSD_LRS
+    name              = "${var.storage_os_disk_name}-${var.prefix}"
+    caching           = var.storage_os_disk_caching
+    create_option     = var.storage_os_disk_create_option
+    managed_disk_type = var.storage_os_disk_managed_disk_type
   }
 
-  os_profile_windows_config {
-    provision_vm_agent = true
+  os_profile_linux_config {
+    disable_password_authentication = true
+
+    ssh_keys {
+      path     = "/home/${var.os_profile_admin_username}/.ssh/authorized_keys"
+      key_data = file(var.os_profile_admin_public_key_path)
+    }
   }
 
   os_profile {
     computer_name  = var.os_profile_computer_name
     admin_username = var.os_profile_admin_username
-    admin_password = var.os_profile_admin_password
   }
-}
-
-resource "azurerm_storage_account" "public" {
-  name                     = "${var.storage_account_name}${var.prefix}"
-  location                 = azurerm_resource_group.public.location
-  resource_group_name      = azurerm_resource_group.public.name
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-}
-
-resource "azurerm_storage_container" "public" {
-  name                  = var.storage_container_name
-  storage_account_name  = azurerm_storage_account.public.name
-  container_access_type = "blob"
-}
-
-resource "azurerm_storage_blob" "public" {
-  name                   = var.custom_script_extension_file_name
-  storage_account_name   = azurerm_storage_account.public.name
-  storage_container_name = azurerm_storage_container.public.name
-  type                   = "Block"
-  source                 = var.custom_script_extension_absolute_path
-}
-
-resource "azurerm_virtual_machine_extension" "public" {
-  name                       = "${var.os_profile_computer_name}H"
-  virtual_machine_id         = azurerm_virtual_machine.public.id
-  publisher                  = "Microsoft.Compute"
-  type                       = "CustomScriptExtension"
-  type_handler_version       = "1.10"
-
-  settings = <<SETTINGS
-        {
-            "fileUris": [
-                "${azurerm_storage_blob.public.url}"
-                ],
-            "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File ${var.custom_script_extension_file_name}"
-        }
-    SETTINGS
 }
