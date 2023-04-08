@@ -7,12 +7,24 @@
 
 ## Jenkins commands
 
-Docs: https://www.jenkins.io/doc/book/installing/linux/#debianubuntu
+Jenkins Docs: https://www.jenkins.io/doc/book/installing/linux/#debianubuntu
+
+.NET SDK Install Docs: https://learn.microsoft.com/en-us/dotnet/core/install/linux-ubuntu-2204
+
+https://stackoverflow.com/questions/61105368/how-to-use-github-personal-access-token-in-jenkins
 
 - `sudo systemctl daemon-reload`
 - `sudo systemctl restart jenkins`
+- `sudo systemctl stop jenkins`
+- `sudo systemctl start jenkins`
 - `sudo systemctl status jenkins`
+- `sudo chmod -R a+rw /var/lib/jenkins`
+- `sudo chmod -R a+rw /var/lib/jenkins/workspace`
+- `sudo chmod -R a+rw /tmp/NugerScratch`
+- `sudo chmod -R a+rw /tmp`
 - `sudo ufw allow 8080`
+- `sudo apt update`
+- `sudo apt install git`
 
 ## Terraform commands
 
