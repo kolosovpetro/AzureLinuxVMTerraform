@@ -5,6 +5,15 @@
 - `ssh -o StrictHostKeyChecking=no razumovsky_r@ip`
 - `chmod 400 <keyname>.pem`
 
+## Jenkins commands
+
+Docs: https://www.jenkins.io/doc/book/installing/linux/#debianubuntu
+
+- `sudo systemctl daemon-reload`
+- `sudo systemctl restart jenkins`
+- `sudo systemctl status jenkins`
+- `sudo ufw allow 8080`
+
 ## Terraform commands
 
 - Init examples:
