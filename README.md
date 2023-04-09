@@ -71,3 +71,4 @@ https://stackoverflow.com/questions/61105368/how-to-use-github-personal-access-t
 - https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_rule
 - https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_machine_extension
 - https://stackoverflow.com/questions/48653350/what-goes-in-the-ssh-keys-key-data-argument-in-a-terraform-template
+- https://linux.how2shout.com/how-to-install-powershell-on-ubuntu-22-04-lts/
