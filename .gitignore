@@ -13,6 +13,8 @@
 *.backup
 *.lock.info
 *.conf
+/terraform/id_rsa
+/terraform/id_rsa.pub
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
