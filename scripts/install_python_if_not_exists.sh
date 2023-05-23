@@ -1,4 +1,4 @@
-!#/bin/bash
+#!/bin/bash
 
 python_exists=$(whereis python3)
 
