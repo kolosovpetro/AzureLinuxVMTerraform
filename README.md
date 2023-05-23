@@ -1,30 +1,11 @@
-# Linux VM in Azure via Terraform
+# Azure Linux VM Terraform
+
+- Azure Terraform backend: https://github.com/kolosovpetro/AzureTerraformBackend
 
 ## SSH commands
 
 - `ssh -o StrictHostKeyChecking=no razumovsky_r@ip`
 - `chmod 400 <keyname>.pem`
-
-## Jenkins commands
-
-Jenkins Docs: https://www.jenkins.io/doc/book/installing/linux/#debianubuntu
-
-.NET SDK Install Docs: https://learn.microsoft.com/en-us/dotnet/core/install/linux-ubuntu-2204
-
-https://stackoverflow.com/questions/61105368/how-to-use-github-personal-access-token-in-jenkins
-
-- `sudo systemctl daemon-reload`
-- `sudo systemctl restart jenkins`
-- `sudo systemctl stop jenkins`
-- `sudo systemctl start jenkins`
-- `sudo systemctl status jenkins`
-- `sudo chmod -R a+rw /var/lib/jenkins`
-- `sudo chmod -R a+rw /var/lib/jenkins/workspace`
-- `sudo chmod -R a+rw /tmp/NugerScratch`
-- `sudo chmod -R a+rw /tmp`
-- `sudo ufw allow 8080`
-- `sudo apt update`
-- `sudo apt install git`
 
 ## Terraform commands
 
@@ -58,8 +39,27 @@ https://stackoverflow.com/questions/61105368/how-to-use-github-personal-access-t
     - `az vm list-sizes -l "northeurope"`
     - `az vm list-skus -l "northeurope" --size Standard_B4ms`
     - https://docs.microsoft.com/en-us/cli/azure/vm?view=azure-cli-latest#az-vm-list-sizes
-- Custom script extension
-  docs: https://learn.microsoft.com/en-us/azure/virtual-machines/extensions/custom-script-windows
+
+## Jenkins commands
+
+Jenkins Docs: https://www.jenkins.io/doc/book/installing/linux/#debianubuntu
+
+.NET SDK Install Docs: https://learn.microsoft.com/en-us/dotnet/core/install/linux-ubuntu-2204
+
+https://stackoverflow.com/questions/61105368/how-to-use-github-personal-access-token-in-jenkins
+
+- `sudo systemctl daemon-reload`
+- `sudo systemctl restart jenkins`
+- `sudo systemctl stop jenkins`
+- `sudo systemctl start jenkins`
+- `sudo systemctl status jenkins`
+- `sudo chmod -R a+rw /var/lib/jenkins`
+- `sudo chmod -R a+rw /var/lib/jenkins/workspace`
+- `sudo chmod -R a+rw /tmp/NugerScratch`
+- `sudo chmod -R a+rw /tmp`
+- `sudo ufw allow 8080`
+- `sudo apt update`
+- `sudo apt install git`
 
 ## Sources
 
