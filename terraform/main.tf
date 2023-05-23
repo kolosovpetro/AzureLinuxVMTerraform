@@ -121,7 +121,7 @@ resource "azurerm_virtual_machine" "public" {
   }
 
   os_profile {
-    computer_name  = var.os_profile_computer_name
+    computer_name  = "${var.os_profile_computer_name}${var.prefix}"
     admin_username = var.os_profile_admin_username
   }
 }
