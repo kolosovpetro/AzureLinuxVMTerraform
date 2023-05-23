@@ -25,6 +25,7 @@
     - `terraform fmt --check`
 - Destroy examples:
     - `terraform plan -var "sql_admin_password=$env:MANGO_TF_SQL_PASS" -var "prefix=${prefix}" -destroy -out "main.destroy.tfplan"`
+    - `terraform plan -var "prefix=${prefix}" -destroy -out "main.destroy.tfplan"`
     - `terraform apply -destroy -auto-approve "main.destroy.tfplan"`
 - Workspace examples:
     - `terraform workspace new d01`
