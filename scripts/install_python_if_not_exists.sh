@@ -2,7 +2,7 @@
 
 python_exists=$(whereis python3)
 
-if [[ ! -z "$python_exists" ]]
+if [[ -n "$python_exists" ]]
 then
 	echo "Python installed at: $python_exists"
 	exit 1
