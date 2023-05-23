@@ -9,7 +9,7 @@
     - name: create an account
       azure_rm_storageaccount:
         resource_group: "rg-ansible-test"
-        name: petrostor31
+        name: ansiblestor31
         type: Standard_LRS
         tags:
           testing: testing
