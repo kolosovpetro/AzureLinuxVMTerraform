@@ -1,11 +1,8 @@
 # Azure Linux VM Terraform
 
 - Azure Terraform backend: https://github.com/kolosovpetro/AzureTerraformBackend
-
-## SSH commands
-
-- `ssh -o StrictHostKeyChecking=no razumovsky_r@ip`
-- `chmod 400 <keyname>.pem`
+- Trello Automate Azure Linux VM preinstalled software: https://trello.com/c/NASWJTpR
+- Trello Get started with Ansible: https://trello.com/c/bprTa7Jr
 
 ## Terraform commands
 
