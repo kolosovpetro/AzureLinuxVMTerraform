@@ -32,6 +32,10 @@ jobs:
       DOTNET_CLI_TELEMETRY_OPTOUT: 1
       ACTIONS_RUNNER_DEBUG: true
       TF_LOG: INFO
+      ARM_CLIENT_ID: ""
+      ARM_CLIENT_SECRET: ${{ secrets.TF_ARM_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ""
+      ARM_TENANT_ID: ""
     
     steps:
       - name: Fetch Sources
