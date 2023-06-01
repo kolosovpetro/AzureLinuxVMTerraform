@@ -6,12 +6,10 @@
 *.sln.docstates
 
 # terraform
-*.lock.hcl
 *.tfplan
 *.tfstate
 /terraform/.terraform
 *.backup
-*.lock.info
 *.conf
 /terraform/id_rsa
 /terraform/id_rsa.pub

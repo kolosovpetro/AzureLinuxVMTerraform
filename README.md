@@ -20,6 +20,11 @@
 - Apply examples:
     - `terraform apply main.tfplan`
     - `terraform fmt --check`
+- Import examples
+    - /subscriptions/42f3171c-7f76-4241-8b33-17e610e83143/resourceGroups/rg-vm-linux-l03
+    - az group show --name rg-vm-linux-l03 --query id --output tsv
+    - terraform import -var "prefix=${prefix}" azurerm_resource_group.public
+      /subscriptions/42f3171c-7f76-4241-8b33-17e610e83143/resourceGroups/rg-vm-linux-l03
 - Destroy examples:
     - `terraform plan -var "sql_admin_password=$env:MANGO_TF_SQL_PASS" -var "prefix=${prefix}" -destroy -out "main.destroy.tfplan"`
     - `terraform plan -var "prefix=${prefix}" -destroy -out "main.destroy.tfplan"`
