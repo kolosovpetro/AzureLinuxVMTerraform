@@ -97,3 +97,23 @@ variable "os_profile_admin_public_key_path" {
   type        = string
   description = "Specifies the public key of the administrator account."
 }
+
+variable "storage_account_name" {
+  type        = string
+  description = "Messenger storage account name"
+}
+
+variable "storage_container_name" {
+  type        = string
+  description = "Messenger storage container name"
+}
+
+variable "storage_account_tier" {
+  type        = string
+  description = "Messenger storage account tier"
+}
+
+variable "storage_account_replication" {
+  type        = string
+  description = "Messenger storage account replication strategy"
+}

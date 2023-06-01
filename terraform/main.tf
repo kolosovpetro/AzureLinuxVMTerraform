@@ -30,3 +30,17 @@ module "ubuntu-vm-public-key-auth" {
     azurerm_resource_group.public
   ]
 }
+
+module "storage" {
+  source                      = "./modules/storage"
+  storage_account_name        = "${var.storage_account_name}${var.prefix}"
+  storage_account_replication = var.storage_account_replication
+  storage_account_tier        = var.storage_account_tier
+  storage_container_name      = var.storage_container_name
+  storage_location            = azurerm_resource_group.public.location
+  storage_resource_group_name = azurerm_resource_group.public.name
+
+  depends_on = [
+    azurerm_resource_group.public
+  ]
+}
