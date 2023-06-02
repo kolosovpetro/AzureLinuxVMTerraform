@@ -60,3 +60,18 @@ module "key_vault" {
     azurerm_resource_group.public
   ]
 }
+
+module "key_vault_secrets" {
+  source                    = "./modules/keyvault-secrets"
+  keyvault_id               = module.key_vault.id
+  storage_access_url        = module.storage.storage_access_url
+  storage_account_name      = module.storage.storage_account_name
+  storage_connection_string = module.storage.storage_connection_string
+  storage_container_name    = module.storage.storage_container_name
+  storage_primary_key       = module.storage.storage_primary_key
+
+  depends_on = [
+    module.key_vault,
+    module.storage
+  ]
+}
