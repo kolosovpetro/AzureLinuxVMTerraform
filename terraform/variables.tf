@@ -117,3 +117,18 @@ variable "storage_account_replication" {
   type        = string
   description = "Messenger storage account replication strategy"
 }
+
+variable "kv_name" {
+  type        = string
+  description = "Key Vault name"
+}
+
+variable "public_ip_name" {
+  type        = string
+  description = "Name of the public IP"
+}
+
+variable "nsg_name" {
+  type        = string
+  description = "Name of the network security group"
+}

@@ -10,6 +10,7 @@
     - `terraform init`
     - `terraform init -backend-config="azure.conf"`
     - `terraform init -backend-config="azure.sas.conf"`
+    - `terraform init -backend-config="azure.sas.conf" -reconfigure`
 - Plan examples
     - `terraform plan -var "prefix=${prefix}" -out "main.tfplan"`
     - `terraform plan -var "prefix=${prefix}" -var "sql_admin_password=$env:MANGO_TF_SQL_PASS" -out "main.tfplan"`

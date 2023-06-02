@@ -1,8 +1,3 @@
-variable "prefix" {
-  type        = string
-  description = "Resources name prefix"
-}
-
 variable "resource_group_name" {
   type        = string
   description = "Resource group name"
@@ -96,4 +91,14 @@ variable "os_profile_admin_username" {
 variable "os_profile_admin_public_key_path" {
   type        = string
   description = "Specifies the public key of the administrator account."
+}
+
+variable "public_ip_name" {
+  type        = string
+  description = "Name of the public IP"
+}
+
+variable "nsg_name" {
+  type        = string
+  description = "Name of the network security group"
 }
