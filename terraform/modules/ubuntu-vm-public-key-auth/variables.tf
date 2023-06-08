@@ -18,6 +18,11 @@ variable "subnet_name" {
   description = "Name of the subnet"
 }
 
+variable "subnet_id" {
+  type        = string
+  description = "ID of the subnet"
+}
+
 variable "network_interface_name" {
   type        = string
   description = "Name of the network interface"

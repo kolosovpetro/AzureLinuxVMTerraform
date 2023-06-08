@@ -5,6 +5,15 @@ resource "azurerm_resource_group" "public" {
   name     = "${var.resource_group_name}-${var.prefix}"
 }
 
+module "network" {
+  source                  = "./modules/network"
+  nsg_name                = var.nsg_name
+  resource_group_location = azurerm_resource_group.public.location
+  resource_group_name     = azurerm_resource_group.public.name
+  subnet_name             = "${var.vm_name}${var.prefix}"
+  vnet_name               = "${var.vnet_name}-${var.prefix}"
+}
+
 module "ubuntu-vm-public-key-auth" {
   source                            = "./modules/ubuntu-vm-public-key-auth"
   ip_configuration_name             = "${var.ip_configuration_name}-${var.prefix}"
@@ -22,15 +31,19 @@ module "ubuntu-vm-public-key-auth" {
   storage_os_disk_create_option     = var.storage_os_disk_create_option
   storage_os_disk_managed_disk_type = var.storage_os_disk_managed_disk_type
   storage_os_disk_name              = "${var.storage_os_disk_name}-${var.prefix}"
-  subnet_name                       = "${var.subnet_name}-${var.prefix}"
+  subnet_name                       = module.network.subnet_name
   vm_name                           = "${var.vm_name}${var.prefix}"
   vm_size                           = var.vm_size
-  vnet_name                         = "${var.vnet_name}-${var.prefix}"
-  nsg_name                          = "${var.nsg_name}-${var.prefix}"
+  vnet_name                         = module.network.vnet_name
   public_ip_name                    = "${var.public_ip_name}-${var.prefix}"
+  subnet_id                         = module.network.subnet_id
+  nsg_name                          = "${var.nsg_name}-${var.prefix}"
 
   depends_on = [
-    azurerm_resource_group.public
+    azurerm_resource_group.public,
+    module.network.subnet_name,
+    module.network.vnet_name,
+    module.network.subnet_id
   ]
 }
 
