@@ -3,6 +3,7 @@
 - Azure Terraform backend: https://github.com/kolosovpetro/AzureTerraformBackend
 - Trello Automate Azure Linux VM preinstalled software: https://trello.com/c/NASWJTpR
 - Trello Get started with Ansible: https://trello.com/c/bprTa7Jr
+- SSH copy ID: https://www.ssh.com/academy/ssh/copy-id
 
 ## Notes
 
@@ -16,11 +17,13 @@
 
 ## Jenkins commands
 
-Jenkins Docs: https://www.jenkins.io/doc/book/installing/linux/#debianubuntu
+### Docs
 
-.NET SDK Install Docs: https://learn.microsoft.com/en-us/dotnet/core/install/linux-ubuntu-2204
+- Jenkins Docs: https://www.jenkins.io/doc/book/installing/linux/#debianubuntu
+- .NET SDK Install Docs: https://learn.microsoft.com/en-us/dotnet/core/install/linux-ubuntu-2204
+- https://stackoverflow.com/questions/61105368/how-to-use-github-personal-access-token-in-jenkins
 
-https://stackoverflow.com/questions/61105368/how-to-use-github-personal-access-token-in-jenkins
+### Commands
 
 - `sudo systemctl daemon-reload`
 - `sudo systemctl restart jenkins`
@@ -46,6 +49,7 @@ https://stackoverflow.com/questions/61105368/how-to-use-github-personal-access-t
 - https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_machine_extension
 - https://stackoverflow.com/questions/48653350/what-goes-in-the-ssh-keys-key-data-argument-in-a-terraform-template
 - https://linux.how2shout.com/how-to-install-powershell-on-ubuntu-22-04-lts/
+
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
@@ -86,7 +90,6 @@ https://stackoverflow.com/questions/61105368/how-to-use-github-personal-access-t
 | <a name="input_os_profile_admin_username"></a> [os\_profile\_admin\_username](#input\_os\_profile\_admin\_username) | Specifies the name of the administrator account. | `string` | n/a | yes |
 | <a name="input_prefix"></a> [prefix](#input\_prefix) | Resources name prefix | `string` | n/a | yes |
 | <a name="input_resource_group_location"></a> [resource\_group\_location](#input\_resource\_group\_location) | Location of the resource group. | `string` | n/a | yes |
-| <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | Resource group name | `string` | n/a | yes |
 | <a name="input_storage_account_replication"></a> [storage\_account\_replication](#input\_storage\_account\_replication) | Messenger storage account replication strategy | `string` | n/a | yes |
 | <a name="input_storage_account_tier"></a> [storage\_account\_tier](#input\_storage\_account\_tier) | Messenger storage account tier | `string` | n/a | yes |
 | <a name="input_storage_image_reference_offer"></a> [storage\_image\_reference\_offer](#input\_storage\_image\_reference\_offer) | Specifies the offer of the platform image or marketplace image used to create the virtual machine. | `string` | n/a | yes |

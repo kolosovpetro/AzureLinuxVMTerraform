@@ -96,7 +96,7 @@ module "storage" {
 module "key_vault" {
   source                 = "./modules/keyvault"
   kv_location            = azurerm_resource_group.public.location
-  kv_name                = "kv-${var.prefix}"
+  kv_name                = "kv-linuxvm-${var.prefix}"
   kv_resource_group_name = azurerm_resource_group.public.name
   object_id              = data.azurerm_client_config.current.object_id
   tenant_id              = data.azurerm_client_config.current.tenant_id
