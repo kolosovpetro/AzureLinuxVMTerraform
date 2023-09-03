@@ -17,8 +17,3 @@ variable "subnet_name" {
   type        = string
   description = "Name of the subnet"
 }
-
-variable "nsg_name" {
-  type        = string
-  description = "Name of the network security group"
-}
