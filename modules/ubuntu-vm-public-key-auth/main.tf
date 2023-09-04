@@ -54,4 +54,8 @@ resource "azurerm_virtual_machine" "public" {
     computer_name  = var.os_profile_computer_name
     admin_username = var.os_profile_admin_username
   }
+
+  depends_on = [
+    azurerm_network_interface_security_group_association.public
+  ]
 }
