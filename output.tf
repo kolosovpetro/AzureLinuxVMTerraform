@@ -1,15 +1,15 @@
-output "ssh_public_ip" {
-  value = module.ubuntu_vm_key_auth.public_ip
+output "ubuntu_vm_key_auth_ssh_command" {
+  value = "ssh razumovsky_r@${module.ubuntu_vm_key_auth.public_ip}"
 }
 
-output "ssh_public_ip_id" {
-  value = module.ubuntu_vm_key_auth.public_ip_id
+output "ubuntu_vm_custom_image_key_auth_ssh_command" {
+  value = "ssh razumovsky_r@${module.ubuntu_vm_custom_image_key_auth.public_ip}"
 }
 
-# output "pass_public_ip" {
-#   value = module.ubuntu-vm-password-auth.public_ip
-# }
-#
-# output "pass_public_ip_id" {
-#   value = module.ubuntu-vm-password-auth.public_ip_id
-# }
+output "ubuntu_vm_pass_auth_ssh_command" {
+  value = "ssh razumovsky_r@${module.ubuntu_vm_pass_auth.public_ip}"
+}
+
+output "ubuntu_vm_pass_auth_custom_image_ssh_command" {
+  value = "ssh razumovsky_r@${module.ubuntu_vm_pass_auth_custom_image.public_ip}"
+}
