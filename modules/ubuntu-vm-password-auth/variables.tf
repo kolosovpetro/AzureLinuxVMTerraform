@@ -57,6 +57,11 @@ variable "os_profile_admin_password" {
   description = "The administrator password for the virtual machine. Use environment variables or a secret manager instead."
 }
 
+variable "network_security_group_id" {
+  type        = string
+  description = "ID of network security group"
+}
+
 #################################################################################################################
 # OPTIONAL VARIABLES (WITH DEFAULT VALUES)
 #################################################################################################################

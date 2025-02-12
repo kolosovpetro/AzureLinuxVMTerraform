@@ -56,6 +56,11 @@ variable "os_profile_admin_public_key" {
   description = "The administrator public key value."
 }
 
+variable "network_security_group_id" {
+  type        = string
+  description = "ID of network security group"
+}
+
 #################################################################################################################
 # OPTIONAL VARIABLES
 #################################################################################################################

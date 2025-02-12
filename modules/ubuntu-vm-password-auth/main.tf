@@ -50,4 +50,13 @@ resource "azurerm_virtual_machine" "public" {
     admin_username = var.os_profile_admin_username
     admin_password = var.os_profile_admin_password
   }
+
+  depends_on = [
+    azurerm_network_interface_security_group_association.nic_association
+  ]
+}
+
+resource "azurerm_network_interface_security_group_association" "nic_association" {
+  network_interface_id      = azurerm_network_interface.public.id
+  network_security_group_id = var.network_security_group_id
 }

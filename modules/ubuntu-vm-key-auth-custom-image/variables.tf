@@ -65,6 +65,11 @@ variable "custom_image_resource_group_name" {
   description = "The custom image resource group."
 }
 
+variable "network_security_group_id" {
+  type        = string
+  description = "ID of network security group"
+}
+
 #################################################################################################################
 # OPTIONAL VARIABLES
 #################################################################################################################
