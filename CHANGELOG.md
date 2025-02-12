@@ -21,3 +21,4 @@ and this project adheres to [Semantic Versioning v2.0.0](https://semver.org/spec
 - Remove example sas token
 - Update key auth vm module
 - Update pass auth vm module
+- Add Custom image key auth module

@@ -50,6 +50,32 @@ resource "azurerm_network_interface_security_group_association" "vm_key_auth_nic
 }
 
 #################################################################################################################
+# VIRTUAL MACHINE CUSTOM IMAGE (PUBLIC KEY AUTH)
+#################################################################################################################
+
+module "ubuntu-vm-custom-image-key-auth" {
+  source                           = "./modules/ubuntu-vm-custom-image-key-auth"
+  custom_image_resource_group_name = "rg-packer-images-linux"
+  custom_image_sku                 = "ubuntu2204-v1"
+  ip_configuration_name            = "ipc-custom-image-key-${var.prefix}"
+  network_interface_name           = "nic-custom-image-key-${var.prefix}"
+  os_profile_admin_public_key      = file("${path.root}/id_rsa.pub")
+  os_profile_admin_username        = "razumovsky_r"
+  os_profile_computer_name         = "vm-custom-image-key-${var.prefix}"
+  public_ip_name                   = "pip-custom-image-key-${var.prefix}"
+  resource_group_location          = azurerm_resource_group.public.location
+  resource_group_name              = azurerm_resource_group.public.name
+  storage_os_disk_name             = "osdisk-custom-image-key-${var.prefix}"
+  subnet_id                        = azurerm_subnet.internal.id
+  vm_name                          = "vm-custom-image-key-${var.prefix}"
+}
+
+resource "azurerm_network_interface_security_group_association" "vm_custom_image_key_auth_nic_association" {
+  network_interface_id      = module.ubuntu-vm-custom-image-key-auth.network_interface_id
+  network_security_group_id = azurerm_network_security_group.public.id
+}
+
+#################################################################################################################
 # VIRTUAL MACHINE (PASSWORD AUTH)
 #################################################################################################################
 
