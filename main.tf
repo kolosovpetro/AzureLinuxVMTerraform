@@ -1,122 +1,108 @@
-data "azurerm_client_config" "current" {}
+#################################################################################################################
+# RESOURCE GROUP
+#################################################################################################################
 
 resource "azurerm_resource_group" "public" {
-  location = var.resource_group_location
-  name     = "rg-linux-vm-${var.prefix}"
+  location = var.location
+  name     = "rg-linux-vms-${var.prefix}"
 }
 
-module "network" {
-  source                  = "./modules/network"
-  resource_group_location = azurerm_resource_group.public.location
-  resource_group_name     = azurerm_resource_group.public.name
-  subnet_name             = "subnet-${var.prefix}"
-  vnet_name               = "vnet-${var.prefix}"
+#################################################################################################################
+# VNET AND SUBNET
+#################################################################################################################
+
+resource "azurerm_virtual_network" "public" {
+  name                = "vnet-${var.prefix}"
+  address_space       = ["10.10.0.0/24"]
+  location            = azurerm_resource_group.public.location
+  resource_group_name = azurerm_resource_group.public.name
 }
 
-module "ubuntu-vm-public-key-auth" {
-  source                            = "./modules/ubuntu-vm-public-key-auth"
-  ip_configuration_name             = "key-auth-vm-ipconfig-${var.prefix}"
-  network_interface_name            = "key-auth-vm-nic-${var.prefix}"
-  os_profile_admin_public_key_path  = var.os_profile_admin_public_key_path
-  os_profile_admin_username         = var.os_profile_admin_username
-  os_profile_computer_name          = "key-auth-vm-${var.prefix}"
-  resource_group_location           = azurerm_resource_group.public.location
-  resource_group_name               = azurerm_resource_group.public.name
-  storage_image_reference_offer     = var.storage_image_reference_offer
-  storage_image_reference_publisher = var.storage_image_reference_publisher
-  storage_image_reference_sku       = var.storage_image_reference_sku
-  storage_image_reference_version   = var.storage_image_reference_version
-  storage_os_disk_caching           = var.storage_os_disk_caching
-  storage_os_disk_create_option     = var.storage_os_disk_create_option
-  storage_os_disk_managed_disk_type = var.storage_os_disk_managed_disk_type
-  storage_os_disk_name              = "key-auth-vm-osdisk-${var.prefix}"
-  subnet_name                       = module.network.subnet_name
-  vm_name                           = "key-auth-vm-${var.prefix}"
-  vm_size                           = var.vm_size
-  vnet_name                         = module.network.vnet_name
-  public_ip_name                    = "key-auth-vm-ip-${var.prefix}"
-  subnet_id                         = module.network.subnet_id
-  nsg_name                          = "key-auth-vm-nsg-${var.prefix}"
-
-  depends_on = [
-    azurerm_resource_group.public,
-    module.network.subnet_name,
-    module.network.vnet_name,
-    module.network.subnet_id
-  ]
+resource "azurerm_subnet" "internal" {
+  name                 = "subnet-${var.prefix}"
+  resource_group_name  = azurerm_resource_group.public.name
+  virtual_network_name = azurerm_virtual_network.public.name
+  address_prefixes     = ["10.10.0.0/26"]
 }
 
-module "ubuntu-vm-password-auth" {
-  source                            = "./modules/ubuntu-vm-password-auth"
-  ip_configuration_name             = "pass-auth-vm-ipconfig-${var.prefix}"
-  network_interface_name            = "pass-auth-vm-nic-${var.prefix}"
-  os_profile_admin_password         = var.os_profile_admin_password
-  os_profile_admin_username         = var.os_profile_admin_username
-  os_profile_computer_name          = "pass-auth-vm-${var.prefix}"
-  resource_group_location           = azurerm_resource_group.public.location
-  resource_group_name               = azurerm_resource_group.public.name
-  storage_image_reference_offer     = var.storage_image_reference_offer
-  storage_image_reference_publisher = var.storage_image_reference_publisher
-  storage_image_reference_sku       = var.storage_image_reference_sku
-  storage_image_reference_version   = var.storage_image_reference_version
-  storage_os_disk_caching           = var.storage_os_disk_caching
-  storage_os_disk_create_option     = var.storage_os_disk_create_option
-  storage_os_disk_managed_disk_type = var.storage_os_disk_managed_disk_type
-  storage_os_disk_name              = "pass-auth-vm-osdisk-${var.prefix}"
-  subnet_name                       = module.network.subnet_name
-  vm_name                           = "pass-auth-vm-${var.prefix}"
-  vm_size                           = var.vm_size
-  vnet_name                         = module.network.vnet_name
-  public_ip_name                    = "pass-auth-vm-ip-${var.prefix}"
-  subnet_id                         = module.network.subnet_id
-  nsg_name                          = "pass-auth-vm-nsg-${var.prefix}"
+#################################################################################################################
+# VIRTUAL MACHINE (PUBLIC KEY AUTH)
+#################################################################################################################
 
-  depends_on = [
-    azurerm_resource_group.public,
-    module.network.subnet_name,
-    module.network.vnet_name,
-    module.network.subnet_id
-  ]
+module "ubuntu_vm_key_auth" {
+  source                      = "./modules/ubuntu-vm-key-auth"
+  resource_group_name         = azurerm_resource_group.public.name
+  resource_group_location     = azurerm_resource_group.public.location
+  subnet_id                   = azurerm_subnet.internal.id
+  ip_configuration_name       = "ipc-key-auth-vm-${var.prefix}"
+  network_interface_name      = "nic-key-auth-vm-${var.prefix}"
+  os_profile_computer_name    = "vm-key-auth-${var.prefix}"
+  storage_os_disk_name        = "osdisk-key-auth-vm-${var.prefix}"
+  vm_name                     = "vm-key-auth-${var.prefix}"
+  public_ip_name              = "pip-key-auth-vm-${var.prefix}"
+  os_profile_admin_public_key = file("${path.root}/id_rsa.pub")
+  os_profile_admin_username   = "razumovsky_r"
+  network_security_group_id   = azurerm_network_security_group.public.id
 }
 
-module "storage" {
-  source                      = "./modules/storage"
-  storage_account_name        = "storlinuxvm${var.prefix}"
-  storage_account_replication = var.storage_account_replication
-  storage_account_tier        = var.storage_account_tier
-  storage_container_name      = "contvmlinux${var.prefix}"
-  storage_location            = azurerm_resource_group.public.location
-  storage_resource_group_name = azurerm_resource_group.public.name
+#################################################################################################################
+# VIRTUAL MACHINE CUSTOM IMAGE (PUBLIC KEY AUTH)
+#################################################################################################################
 
-  depends_on = [
-    azurerm_resource_group.public
-  ]
+module "ubuntu_vm_custom_image_key_auth" {
+  source                           = "./modules/ubuntu-vm-key-auth-custom-image"
+  custom_image_resource_group_name = "rg-packer-images-linux"
+  custom_image_sku                 = "ubuntu2204-v1"
+  ip_configuration_name            = "ipc-custom-image-key-${var.prefix}"
+  network_interface_name           = "nic-custom-image-key-${var.prefix}"
+  os_profile_admin_public_key      = file("${path.root}/id_rsa.pub")
+  os_profile_admin_username        = "razumovsky_r"
+  os_profile_computer_name         = "vm-custom-image-key-${var.prefix}"
+  public_ip_name                   = "pip-custom-image-key-${var.prefix}"
+  resource_group_location          = azurerm_resource_group.public.location
+  resource_group_name              = azurerm_resource_group.public.name
+  storage_os_disk_name             = "osdisk-custom-image-key-${var.prefix}"
+  subnet_id                        = azurerm_subnet.internal.id
+  vm_name                          = "vm-custom-image-key-${var.prefix}"
+  network_security_group_id        = azurerm_network_security_group.public.id
 }
 
-module "key_vault" {
-  source                 = "./modules/keyvault"
-  kv_location            = azurerm_resource_group.public.location
-  kv_name                = "kv-linuxvm-${var.prefix}"
-  kv_resource_group_name = azurerm_resource_group.public.name
-  object_id              = data.azurerm_client_config.current.object_id
-  tenant_id              = data.azurerm_client_config.current.tenant_id
+#################################################################################################################
+# VIRTUAL MACHINE (PASSWORD AUTH)
+#################################################################################################################
 
-  depends_on = [
-    azurerm_resource_group.public
-  ]
+module "ubuntu_vm_pass_auth" {
+  source                    = "./modules/ubuntu-vm-password-auth"
+  ip_configuration_name     = "pip-pass-auth-${var.prefix}"
+  network_interface_name    = "nic-pass-auth-${var.prefix}"
+  os_profile_admin_password = trimspace(file("${path.root}/password.txt"))
+  os_profile_admin_username = "razumovsky_r"
+  os_profile_computer_name  = "vm-pass-auth-${var.prefix}"
+  public_ip_name            = "pip-pass-auth-${var.prefix}"
+  resource_group_name       = azurerm_resource_group.public.name
+  resource_group_location   = azurerm_resource_group.public.location
+  storage_os_disk_name      = "osdisk-pass-auth-vm-${var.prefix}"
+  subnet_id                 = azurerm_subnet.internal.id
+  vm_name                   = "vm-pass-auth-${var.prefix}"
+  network_security_group_id = azurerm_network_security_group.public.id
 }
 
-module "key_vault_secrets" {
-  source                    = "./modules/keyvault-secrets"
-  keyvault_id               = module.key_vault.id
-  storage_access_url        = module.storage.storage_access_url
-  storage_account_name      = module.storage.storage_account_name
-  storage_connection_string = module.storage.storage_connection_string
-  storage_container_name    = module.storage.storage_container_name
-  storage_primary_key       = module.storage.storage_primary_key
+#################################################################################################################
+# VIRTUAL MACHINE CUSTOM IMAGE (PASSWORD AUTH)
+#################################################################################################################
 
-  depends_on = [
-    module.key_vault,
-    module.storage
-  ]
+module "ubuntu_vm_pass_auth_custom_image" {
+  source                    = "./modules/ubuntu-vm-password-auth-custom-image"
+  ip_configuration_name     = "pip-custom-pass-${var.prefix}"
+  network_interface_name    = "nic-custom-pass-${var.prefix}"
+  os_profile_admin_password = trimspace(file("${path.root}/password.txt"))
+  os_profile_admin_username = "razumovsky_r"
+  os_profile_computer_name  = "vm-custom-pass-${var.prefix}"
+  public_ip_name            = "pip-custom-pass-${var.prefix}"
+  resource_group_name       = azurerm_resource_group.public.name
+  resource_group_location   = azurerm_resource_group.public.location
+  storage_os_disk_name      = "osdisk-custom-pass-${var.prefix}"
+  subnet_id                 = azurerm_subnet.internal.id
+  vm_name                   = "vm-custom-pass-${var.prefix}"
+  network_security_group_id = azurerm_network_security_group.public.id
 }

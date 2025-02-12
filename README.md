@@ -1,44 +1,107 @@
 # Azure Linux VM Terraform
 
-- Azure Terraform backend: https://github.com/kolosovpetro/AzureTerraformBackend
-- Trello Automate Azure Linux VM preinstalled software: https://trello.com/c/NASWJTpR
-- Trello Get started with Ansible: https://trello.com/c/bprTa7Jr
-- SSH copy ID: https://www.ssh.com/academy/ssh/copy-id
+Terraform modules for Azure Linux Virtual machines
+
+- VM with public key authentication
+- VM with custom image and public key authentication
+- VM with password authentication
+- VM with custom image and password authentication
+
+## Examples
+
+**VM with public key authentication**
+
+```hcl
+module "ubuntu_vm_key_auth" {
+  source                    = "github.com/kolosovpetro/AzureLinuxVMTerraform.git//modules/ubuntu-vm-key-auth?ref=master"
+  resource_group_name       = azurerm_resource_group.public.name
+  resource_group_location   = azurerm_resource_group.public.location
+  subnet_id                 = azurerm_subnet.internal.id
+  ip_configuration_name     = "ipc-key-auth-vm-${var.prefix}"
+  network_interface_name    = "nic-key-auth-vm-${var.prefix}"
+  os_profile_computer_name  = "vm-key-auth-${var.prefix}"
+  storage_os_disk_name      = "osdisk-key-auth-vm-${var.prefix}"
+  vm_name                   = "vm-key-auth-${var.prefix}"
+  public_ip_name            = "pip-key-auth-vm-${var.prefix}"
+  os_profile_admin_public_key = file("${path.root}/id_rsa.pub")
+  os_profile_admin_username = "razumovsky_r"
+  network_security_group_id = azurerm_network_security_group.public.id
+}
+```
+
+**VM with custom image and public key authentication**
+
+```hcl
+module "ubuntu_vm_custom_image_key_auth" {
+  source                           = "github.com/kolosovpetro/AzureLinuxVMTerraform.git//modules/ubuntu-vm-key-auth-custom-image?ref=master"
+  custom_image_resource_group_name = "rg-packer-images-linux"
+  custom_image_sku                 = "ubuntu2204-v1"
+  ip_configuration_name            = "ipc-custom-image-key-${var.prefix}"
+  network_interface_name           = "nic-custom-image-key-${var.prefix}"
+  os_profile_admin_public_key = file("${path.root}/id_rsa.pub")
+  os_profile_admin_username        = "razumovsky_r"
+  os_profile_computer_name         = "vm-custom-image-key-${var.prefix}"
+  public_ip_name                   = "pip-custom-image-key-${var.prefix}"
+  resource_group_location          = azurerm_resource_group.public.location
+  resource_group_name              = azurerm_resource_group.public.name
+  storage_os_disk_name             = "osdisk-custom-image-key-${var.prefix}"
+  subnet_id                        = azurerm_subnet.internal.id
+  vm_name                          = "vm-custom-image-key-${var.prefix}"
+  network_security_group_id        = azurerm_network_security_group.public.id
+}
+```
+
+**VM with password authentication**
+
+```hcl
+module "ubuntu_vm_pass_auth" {
+  source                    = "github.com/kolosovpetro/AzureLinuxVMTerraform.git//modules/ubuntu-vm-password-auth?ref=master"
+  ip_configuration_name     = "pip-pass-auth-${var.prefix}"
+  network_interface_name    = "nic-pass-auth-${var.prefix}"
+  os_profile_admin_password = trimspace(file("${path.root}/password.txt"))
+  os_profile_admin_username = "razumovsky_r"
+  os_profile_computer_name  = "vm-pass-auth-${var.prefix}"
+  public_ip_name            = "pip-pass-auth-${var.prefix}"
+  resource_group_name       = azurerm_resource_group.public.name
+  resource_group_location   = azurerm_resource_group.public.location
+  storage_os_disk_name      = "osdisk-pass-auth-vm-${var.prefix}"
+  subnet_id                 = azurerm_subnet.internal.id
+  vm_name                   = "vm-pass-auth-${var.prefix}"
+  network_security_group_id = azurerm_network_security_group.public.id
+}
+```
+
+**VM with custom image and password authentication**
+
+```hcl
+module "ubuntu_vm_pass_auth_custom_image" {
+  source                    = "github.com/kolosovpetro/AzureLinuxVMTerraform.git//modules/ubuntu-vm-password-auth-custom-image?ref=master"
+  ip_configuration_name     = "pip-custom-pass-${var.prefix}"
+  network_interface_name    = "nic-custom-pass-${var.prefix}"
+  os_profile_admin_password = trimspace(file("${path.root}/password.txt"))
+  os_profile_admin_username = "razumovsky_r"
+  os_profile_computer_name  = "vm-custom-pass-${var.prefix}"
+  public_ip_name            = "pip-custom-pass-${var.prefix}"
+  resource_group_name       = azurerm_resource_group.public.name
+  resource_group_location   = azurerm_resource_group.public.location
+  storage_os_disk_name      = "osdisk-custom-pass-${var.prefix}"
+  subnet_id                 = azurerm_subnet.internal.id
+  vm_name                   = "vm-custom-pass-${var.prefix}"
+  network_security_group_id = azurerm_network_security_group.public.id
+}
+```
 
 ## Notes
 
 - Print available azure vm images:
-    - `az vm image list`
-    - https://learn.microsoft.com/en-us/cli/azure/vm/image?view=azure-cli-latest#az-vm-image-list
+  - `az vm image list`
+  - https://learn.microsoft.com/en-us/cli/azure/vm/image?view=azure-cli-latest#az-vm-image-list
 - Print available azure vm sizes:
-    - `az vm list-sizes -l "northeurope"`
-    - `az vm list-skus -l "northeurope" --size Standard_B4ms`
-    - https://docs.microsoft.com/en-us/cli/azure/vm?view=azure-cli-latest#az-vm-list-sizes
+  - `az vm list-sizes -l "northeurope"`
+  - `az vm list-skus -l "northeurope" --size Standard_B4ms`
+  - https://docs.microsoft.com/en-us/cli/azure/vm?view=azure-cli-latest#az-vm-list-sizes
 
-## Jenkins commands
-
-### Docs
-
-- Jenkins Docs: https://www.jenkins.io/doc/book/installing/linux/#debianubuntu
-- .NET SDK Install Docs: https://learn.microsoft.com/en-us/dotnet/core/install/linux-ubuntu-2204
-- https://stackoverflow.com/questions/61105368/how-to-use-github-personal-access-token-in-jenkins
-
-### Commands
-
-- `sudo systemctl daemon-reload`
-- `sudo systemctl restart jenkins`
-- `sudo systemctl stop jenkins`
-- `sudo systemctl start jenkins`
-- `sudo systemctl status jenkins`
-- `sudo chmod -R a+rw /var/lib/jenkins`
-- `sudo chmod -R a+rw /var/lib/jenkins/workspace`
-- `sudo chmod -R a+rw /tmp/NugerScratch`
-- `sudo chmod -R a+rw /tmp`
-- `sudo ufw allow 8080`
-- `sudo apt update`
-- `sudo apt install git`
-
-## Sources
+## Terraform modules used
 
 - https://azure.microsoft.com/es-es/blog/chocolatey-with-custom-script-extension-on-azure-vms/
 - https://devkimchi.com/2020/08/26/app-provisioning-on-azure-vm-with-chocolatey-for-live-streaming/
@@ -49,64 +112,3 @@
 - https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_machine_extension
 - https://stackoverflow.com/questions/48653350/what-goes-in-the-ssh-keys-key-data-argument-in-a-terraform-template
 - https://linux.how2shout.com/how-to-install-powershell-on-ubuntu-22-04-lts/
-
-<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Requirements
-
-| Name | Version |
-|------|---------|
-| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | =3.71.0 |
-
-## Providers
-
-| Name | Version |
-|------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 3.71.0 |
-
-## Modules
-
-| Name | Source | Version |
-|------|--------|---------|
-| <a name="module_key_vault"></a> [key\_vault](#module\_key\_vault) | ./modules/keyvault | n/a |
-| <a name="module_key_vault_secrets"></a> [key\_vault\_secrets](#module\_key\_vault\_secrets) | ./modules/keyvault-secrets | n/a |
-| <a name="module_network"></a> [network](#module\_network) | ./modules/network | n/a |
-| <a name="module_storage"></a> [storage](#module\_storage) | ./modules/storage | n/a |
-| <a name="module_ubuntu-vm-password-auth"></a> [ubuntu-vm-password-auth](#module\_ubuntu-vm-password-auth) | ./modules/ubuntu-vm-password-auth | n/a |
-| <a name="module_ubuntu-vm-public-key-auth"></a> [ubuntu-vm-public-key-auth](#module\_ubuntu-vm-public-key-auth) | ./modules/ubuntu-vm-public-key-auth | n/a |
-
-## Resources
-
-| Name | Type |
-|------|------|
-| [azurerm_resource_group.public](https://registry.terraform.io/providers/hashicorp/azurerm/3.71.0/docs/resources/resource_group) | resource |
-| [azurerm_client_config.current](https://registry.terraform.io/providers/hashicorp/azurerm/3.71.0/docs/data-sources/client_config) | data source |
-
-## Inputs
-
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-| <a name="input_os_profile_admin_password"></a> [os\_profile\_admin\_password](#input\_os\_profile\_admin\_password) | Specifies the password of the administrator account. | `string` | n/a | yes |
-| <a name="input_os_profile_admin_public_key_path"></a> [os\_profile\_admin\_public\_key\_path](#input\_os\_profile\_admin\_public\_key\_path) | Specifies the public key of the administrator account. | `string` | n/a | yes |
-| <a name="input_os_profile_admin_username"></a> [os\_profile\_admin\_username](#input\_os\_profile\_admin\_username) | Specifies the name of the administrator account. | `string` | n/a | yes |
-| <a name="input_prefix"></a> [prefix](#input\_prefix) | Resources name prefix | `string` | n/a | yes |
-| <a name="input_resource_group_location"></a> [resource\_group\_location](#input\_resource\_group\_location) | Location of the resource group. | `string` | n/a | yes |
-| <a name="input_storage_account_replication"></a> [storage\_account\_replication](#input\_storage\_account\_replication) | Messenger storage account replication strategy | `string` | n/a | yes |
-| <a name="input_storage_account_tier"></a> [storage\_account\_tier](#input\_storage\_account\_tier) | Messenger storage account tier | `string` | n/a | yes |
-| <a name="input_storage_image_reference_offer"></a> [storage\_image\_reference\_offer](#input\_storage\_image\_reference\_offer) | Specifies the offer of the platform image or marketplace image used to create the virtual machine. | `string` | n/a | yes |
-| <a name="input_storage_image_reference_publisher"></a> [storage\_image\_reference\_publisher](#input\_storage\_image\_reference\_publisher) | The publisher of the image used to create the virtual machine. | `string` | n/a | yes |
-| <a name="input_storage_image_reference_sku"></a> [storage\_image\_reference\_sku](#input\_storage\_image\_reference\_sku) | Specifies the SKU of the platform image or marketplace image used to create the virtual machine. | `string` | n/a | yes |
-| <a name="input_storage_image_reference_version"></a> [storage\_image\_reference\_version](#input\_storage\_image\_reference\_version) | Specifies the version of the platform image or marketplace image used to create the virtual machine. | `string` | n/a | yes |
-| <a name="input_storage_os_disk_caching"></a> [storage\_os\_disk\_caching](#input\_storage\_os\_disk\_caching) | Specifies the caching requirements for the OS disk. | `string` | n/a | yes |
-| <a name="input_storage_os_disk_create_option"></a> [storage\_os\_disk\_create\_option](#input\_storage\_os\_disk\_create\_option) | Specifies how the virtual machine should be created. | `string` | n/a | yes |
-| <a name="input_storage_os_disk_managed_disk_type"></a> [storage\_os\_disk\_managed\_disk\_type](#input\_storage\_os\_disk\_managed\_disk\_type) | Specifies the storage account type for the managed disk. | `string` | n/a | yes |
-| <a name="input_vm_size"></a> [vm\_size](#input\_vm\_size) | The size of the virtual machine. | `string` | n/a | yes |
-
-## Outputs
-
-| Name | Description |
-|------|-------------|
-| <a name="output_pass_public_ip"></a> [pass\_public\_ip](#output\_pass\_public\_ip) | n/a |
-| <a name="output_pass_public_ip_id"></a> [pass\_public\_ip\_id](#output\_pass\_public\_ip\_id) | n/a |
-| <a name="output_ssh_public_ip"></a> [ssh\_public\_ip](#output\_ssh\_public\_ip) | n/a |
-| <a name="output_ssh_public_ip_id"></a> [ssh\_public\_ip\_id](#output\_ssh\_public\_ip\_id) | n/a |
-<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

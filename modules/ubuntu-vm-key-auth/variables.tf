@@ -1,7 +1,6 @@
 #################################################################################################################
 # REQUIRED VARIABLES
 #################################################################################################################
-
 variable "resource_group_name" {
   type        = string
   description = "The name of the Azure resource group in which resources will be deployed."
@@ -52,9 +51,9 @@ variable "os_profile_admin_username" {
   description = "The administrator username for the virtual machine."
 }
 
-variable "os_profile_admin_password" {
+variable "os_profile_admin_public_key" {
   type        = string
-  description = "The administrator password for the virtual machine. Use environment variables or a secret manager instead."
+  description = "The administrator public key value."
 }
 
 variable "network_security_group_id" {
@@ -63,9 +62,8 @@ variable "network_security_group_id" {
 }
 
 #################################################################################################################
-# OPTIONAL VARIABLES (WITH DEFAULT VALUES)
+# OPTIONAL VARIABLES
 #################################################################################################################
-
 variable "vm_size" {
   type        = string
   description = "Specifies the size of the virtual machine."

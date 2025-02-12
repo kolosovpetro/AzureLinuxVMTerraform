@@ -42,20 +42,21 @@ resource "azurerm_virtual_machine" "public" {
   }
 
   os_profile_linux_config {
-    disable_password_authentication = true
-
-    ssh_keys {
-      path     = "/home/${var.os_profile_admin_username}/.ssh/authorized_keys"
-      key_data = file(var.os_profile_admin_public_key_path)
-    }
+    disable_password_authentication = false
   }
 
   os_profile {
     computer_name  = var.os_profile_computer_name
     admin_username = var.os_profile_admin_username
+    admin_password = var.os_profile_admin_password
   }
 
   depends_on = [
-    azurerm_network_interface_security_group_association.public
+    azurerm_network_interface_security_group_association.nic_association
   ]
+}
+
+resource "azurerm_network_interface_security_group_association" "nic_association" {
+  network_interface_id      = azurerm_network_interface.public.id
+  network_security_group_id = var.network_security_group_id
 }

@@ -18,6 +18,11 @@ resource "azurerm_network_interface" "public" {
   }
 }
 
+data "azurerm_image" "search" {
+  name                = var.custom_image_sku
+  resource_group_name = var.custom_image_resource_group_name
+}
+
 resource "azurerm_virtual_machine" "public" {
   name                  = var.vm_name
   location              = var.resource_group_location
@@ -28,10 +33,7 @@ resource "azurerm_virtual_machine" "public" {
   delete_os_disk_on_termination = true
 
   storage_image_reference {
-    publisher = var.storage_image_reference_publisher
-    offer     = var.storage_image_reference_offer
-    sku       = var.storage_image_reference_sku
-    version   = var.storage_image_reference_version
+    id = data.azurerm_image.search.id
   }
 
   storage_os_disk {
@@ -42,13 +44,17 @@ resource "azurerm_virtual_machine" "public" {
   }
 
   os_profile_linux_config {
-    disable_password_authentication = false
+    disable_password_authentication = true
+
+    ssh_keys {
+      path     = "/home/${var.os_profile_admin_username}/.ssh/authorized_keys"
+      key_data = var.os_profile_admin_public_key
+    }
   }
 
   os_profile {
     computer_name  = var.os_profile_computer_name
     admin_username = var.os_profile_admin_username
-    admin_password = var.os_profile_admin_password
   }
 
   depends_on = [
