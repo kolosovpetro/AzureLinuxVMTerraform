@@ -3,7 +3,7 @@ variable "prefix" {
   description = "Resources name prefix"
 }
 
-variable "resource_group_location" {
+variable "location" {
   type        = string
   description = "Location of the resource group."
 }
@@ -71,4 +71,8 @@ variable "storage_account_tier" {
 variable "storage_account_replication" {
   type        = string
   description = "Messenger storage account replication strategy"
+}
+
+variable "subscription_id" {
+  default = ""
 }

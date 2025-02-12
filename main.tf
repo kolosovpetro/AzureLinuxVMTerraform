@@ -1,19 +1,31 @@
-data "azurerm_client_config" "current" {}
+#################################################################################################################
+# RESOURCE GROUP
+#################################################################################################################
 
 resource "azurerm_resource_group" "public" {
-  location = var.resource_group_location
-  name     = "rg-linux-vm-${var.prefix}"
+  location = var.location
+  name     = "rg-windows-vms-${var.prefix}"
 }
 
-module "network" {
-  source                  = "./modules/network"
-  resource_group_location = azurerm_resource_group.public.location
-  resource_group_name     = azurerm_resource_group.public.name
-  subnet_name             = "subnet-${var.prefix}"
-  vnet_name               = "vnet-${var.prefix}"
+#################################################################################################################
+# VNET AND SUBNET
+#################################################################################################################
+
+resource "azurerm_virtual_network" "public" {
+  name                = "vnet-${var.prefix}"
+  address_space = ["10.10.0.0/24"]
+  location            = azurerm_resource_group.public.location
+  resource_group_name = azurerm_resource_group.public.name
 }
 
-module "ubuntu-vm-public-key-auth" {
+resource "azurerm_subnet" "internal" {
+  name                 = "subnet-${var.prefix}"
+  resource_group_name  = azurerm_resource_group.public.name
+  virtual_network_name = azurerm_virtual_network.public.name
+  address_prefixes = ["10.10.0.0/26"]
+}
+
+module "ubuntu-vm-key-auth" {
   source                            = "./modules/ubuntu-vm-public-key-auth"
   ip_configuration_name             = "key-auth-vm-ipconfig-${var.prefix}"
   network_interface_name            = "key-auth-vm-nic-${var.prefix}"
@@ -30,20 +42,13 @@ module "ubuntu-vm-public-key-auth" {
   storage_os_disk_create_option     = var.storage_os_disk_create_option
   storage_os_disk_managed_disk_type = var.storage_os_disk_managed_disk_type
   storage_os_disk_name              = "key-auth-vm-osdisk-${var.prefix}"
-  subnet_name                       = module.network.subnet_name
+  subnet_name                       = azurerm_subnet.internal.name
   vm_name                           = "key-auth-vm-${var.prefix}"
   vm_size                           = var.vm_size
-  vnet_name                         = module.network.vnet_name
+  vnet_name                         = azurerm_virtual_network.public.name
   public_ip_name                    = "key-auth-vm-ip-${var.prefix}"
-  subnet_id                         = module.network.subnet_id
+  subnet_id                         = azurerm_subnet.internal.id
   nsg_name                          = "key-auth-vm-nsg-${var.prefix}"
-
-  depends_on = [
-    azurerm_resource_group.public,
-    module.network.subnet_name,
-    module.network.vnet_name,
-    module.network.subnet_id
-  ]
 }
 
 module "ubuntu-vm-password-auth" {
@@ -63,60 +68,11 @@ module "ubuntu-vm-password-auth" {
   storage_os_disk_create_option     = var.storage_os_disk_create_option
   storage_os_disk_managed_disk_type = var.storage_os_disk_managed_disk_type
   storage_os_disk_name              = "pass-auth-vm-osdisk-${var.prefix}"
-  subnet_name                       = module.network.subnet_name
+  subnet_name                       = azurerm_subnet.internal.name
   vm_name                           = "pass-auth-vm-${var.prefix}"
   vm_size                           = var.vm_size
-  vnet_name                         = module.network.vnet_name
+  vnet_name                         = azurerm_virtual_network.public.name
   public_ip_name                    = "pass-auth-vm-ip-${var.prefix}"
-  subnet_id                         = module.network.subnet_id
+  subnet_id                         = azurerm_subnet.internal.id
   nsg_name                          = "pass-auth-vm-nsg-${var.prefix}"
-
-  depends_on = [
-    azurerm_resource_group.public,
-    module.network.subnet_name,
-    module.network.vnet_name,
-    module.network.subnet_id
-  ]
-}
-
-module "storage" {
-  source                      = "./modules/storage"
-  storage_account_name        = "storlinuxvm${var.prefix}"
-  storage_account_replication = var.storage_account_replication
-  storage_account_tier        = var.storage_account_tier
-  storage_container_name      = "contvmlinux${var.prefix}"
-  storage_location            = azurerm_resource_group.public.location
-  storage_resource_group_name = azurerm_resource_group.public.name
-
-  depends_on = [
-    azurerm_resource_group.public
-  ]
-}
-
-module "key_vault" {
-  source                 = "./modules/keyvault"
-  kv_location            = azurerm_resource_group.public.location
-  kv_name                = "kv-linuxvm-${var.prefix}"
-  kv_resource_group_name = azurerm_resource_group.public.name
-  object_id              = data.azurerm_client_config.current.object_id
-  tenant_id              = data.azurerm_client_config.current.tenant_id
-
-  depends_on = [
-    azurerm_resource_group.public
-  ]
-}
-
-module "key_vault_secrets" {
-  source                    = "./modules/keyvault-secrets"
-  keyvault_id               = module.key_vault.id
-  storage_access_url        = module.storage.storage_access_url
-  storage_account_name      = module.storage.storage_account_name
-  storage_connection_string = module.storage.storage_connection_string
-  storage_container_name    = module.storage.storage_container_name
-  storage_primary_key       = module.storage.storage_primary_key
-
-  depends_on = [
-    module.key_vault,
-    module.storage
-  ]
 }
