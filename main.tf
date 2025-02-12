@@ -48,3 +48,27 @@ resource "azurerm_network_interface_security_group_association" "vm_key_auth_nic
   network_interface_id      = module.ubuntu-vm-key-auth.network_interface_id
   network_security_group_id = azurerm_network_security_group.public.id
 }
+
+#################################################################################################################
+# VIRTUAL MACHINE (PASSWORD AUTH)
+#################################################################################################################
+
+module "ubuntu-vm-pass-auth" {
+  source                    = "./modules/ubuntu-vm-password-auth"
+  ip_configuration_name     = "pip-pass-auth-${var.prefix}"
+  network_interface_name    = "nic-pass-auth-${var.prefix}"
+  os_profile_admin_password = file("${path.root}/password.txt")
+  os_profile_admin_username = "razumovsky_r"
+  os_profile_computer_name  = "vm-pass-auth-${var.prefix}"
+  public_ip_name            = "pip-pass-auth-${var.prefix}"
+  resource_group_name       = azurerm_resource_group.public.name
+  resource_group_location   = azurerm_resource_group.public.location
+  storage_os_disk_name      = "osdisk-pass-auth-vm-${var.prefix}"
+  subnet_id                 = azurerm_subnet.internal.id
+  vm_name                   = "vm-pass-auth-${var.prefix}"
+}
+
+resource "azurerm_network_interface_security_group_association" "vm_pass_auth_nic_association" {
+  network_interface_id      = module.ubuntu-vm-pass-auth.network_interface_id
+  network_security_group_id = azurerm_network_security_group.public.id
+}

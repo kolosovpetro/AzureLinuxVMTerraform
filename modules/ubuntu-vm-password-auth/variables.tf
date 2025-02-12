@@ -1,3 +1,7 @@
+#################################################################################################################
+# REQUIRED VARIABLES
+#################################################################################################################
+
 variable "resource_group_name" {
   type        = string
   description = "The name of the Azure resource group in which resources will be deployed."
@@ -6,7 +10,6 @@ variable "resource_group_name" {
 variable "resource_group_location" {
   type        = string
   description = "The Azure region where the resource group will be created."
-  default     = "northeurope"
 }
 
 variable "subnet_id" {
@@ -28,6 +31,35 @@ variable "vm_name" {
   type        = string
   description = "The name of the virtual machine instance."
 }
+
+variable "storage_os_disk_name" {
+  type        = string
+  description = "The name assigned to the OS disk."
+}
+
+variable "os_profile_computer_name" {
+  type        = string
+  description = "The hostname of the virtual machine."
+}
+
+variable "public_ip_name" {
+  type        = string
+  description = "The name of the public IP resource associated with the VM."
+}
+
+variable "os_profile_admin_username" {
+  type        = string
+  description = "The administrator username for the virtual machine."
+}
+
+variable "os_profile_admin_password" {
+  type        = string
+  description = "The administrator password for the virtual machine. Use environment variables or a secret manager instead."
+}
+
+#################################################################################################################
+# OPTIONAL VARIABLES (WITH DEFAULT VALUES)
+#################################################################################################################
 
 variable "vm_size" {
   type        = string
@@ -59,11 +91,6 @@ variable "storage_image_reference_version" {
   default     = "latest"
 }
 
-variable "storage_os_disk_name" {
-  type        = string
-  description = "The name assigned to the OS disk."
-}
-
 variable "storage_os_disk_caching" {
   type        = string
   description = "Defines the caching policy for the OS disk (e.g., ReadOnly, ReadWrite)."
@@ -80,26 +107,4 @@ variable "storage_os_disk_managed_disk_type" {
   type        = string
   description = "Defines the type of managed disk for the OS disk (e.g., Premium_LRS, Standard_LRS)."
   default     = "Premium_LRS"
-}
-
-variable "os_profile_computer_name" {
-  type        = string
-  description = "The hostname of the virtual machine."
-}
-
-variable "os_profile_admin_username" {
-  type        = string
-  description = "The administrator username for the virtual machine."
-  default     = "razumovsky_r"
-}
-
-variable "os_profile_admin_password" {
-  type        = string
-  description = "The administrator password for the virtual machine. Use environment variables or a secret manager instead."
-  default     = "2HiVkwYAx0VKJoAC"
-}
-
-variable "public_ip_name" {
-  type        = string
-  description = "The name of the public IP resource associated with the VM."
 }
