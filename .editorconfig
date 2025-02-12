@@ -8,6 +8,6 @@ insert_final_newline = true
 trim_trailing_whitespace = true
 end_of_line = lf
 
-[*.{xml,yml,yaml,json,tf,txt}]
+[*.{xml,yml,yaml,json,tf,txt,md}]
 indent_size = 2
 insert_final_newline = false
