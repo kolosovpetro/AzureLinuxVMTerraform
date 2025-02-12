@@ -29,7 +29,7 @@ resource "azurerm_subnet" "internal" {
 # VIRTUAL MACHINE (PUBLIC KEY AUTH)
 #################################################################################################################
 
-module "ubuntu-vm-key-auth" {
+module "ubuntu_vm_key_auth" {
   source                      = "./modules/ubuntu-vm-key-auth"
   resource_group_name         = azurerm_resource_group.public.name
   resource_group_location     = azurerm_resource_group.public.location
@@ -44,8 +44,8 @@ module "ubuntu-vm-key-auth" {
   os_profile_admin_username   = "razumovsky_r"
 }
 
-resource "azurerm_network_interface_security_group_association" "vm_key_auth_nic_association" {
-  network_interface_id      = module.ubuntu-vm-key-auth.network_interface_id
+resource "azurerm_network_interface_security_group_association" "ubuntu_vm_key_auth_nic_association" {
+  network_interface_id      = module.ubuntu_vm_key_auth.network_interface_id
   network_security_group_id = azurerm_network_security_group.public.id
 }
 
@@ -53,8 +53,8 @@ resource "azurerm_network_interface_security_group_association" "vm_key_auth_nic
 # VIRTUAL MACHINE CUSTOM IMAGE (PUBLIC KEY AUTH)
 #################################################################################################################
 
-module "ubuntu-vm-custom-image-key-auth" {
-  source                           = "./modules/ubuntu-vm-custom-image-key-auth"
+module "ubuntu_vm_custom_image_key_auth" {
+  source                           = "./modules/ubuntu-vm-key-auth-custom-image"
   custom_image_resource_group_name = "rg-packer-images-linux"
   custom_image_sku                 = "ubuntu2204-v1"
   ip_configuration_name            = "ipc-custom-image-key-${var.prefix}"
@@ -70,8 +70,8 @@ module "ubuntu-vm-custom-image-key-auth" {
   vm_name                          = "vm-custom-image-key-${var.prefix}"
 }
 
-resource "azurerm_network_interface_security_group_association" "vm_custom_image_key_auth_nic_association" {
-  network_interface_id      = module.ubuntu-vm-custom-image-key-auth.network_interface_id
+resource "azurerm_network_interface_security_group_association" "ubuntu_vm_custom_image_key_auth_nic_association" {
+  network_interface_id      = module.ubuntu_vm_custom_image_key_auth.network_interface_id
   network_security_group_id = azurerm_network_security_group.public.id
 }
 
@@ -79,7 +79,7 @@ resource "azurerm_network_interface_security_group_association" "vm_custom_image
 # VIRTUAL MACHINE (PASSWORD AUTH)
 #################################################################################################################
 
-module "ubuntu-vm-pass-auth" {
+module "ubuntu_vm_pass_auth" {
   source                    = "./modules/ubuntu-vm-password-auth"
   ip_configuration_name     = "pip-pass-auth-${var.prefix}"
   network_interface_name    = "nic-pass-auth-${var.prefix}"
@@ -94,7 +94,31 @@ module "ubuntu-vm-pass-auth" {
   vm_name                   = "vm-pass-auth-${var.prefix}"
 }
 
-resource "azurerm_network_interface_security_group_association" "vm_pass_auth_nic_association" {
-  network_interface_id      = module.ubuntu-vm-pass-auth.network_interface_id
+resource "azurerm_network_interface_security_group_association" "ubuntu_vm_pass_auth_nic_association" {
+  network_interface_id      = module.ubuntu_vm_pass_auth.network_interface_id
+  network_security_group_id = azurerm_network_security_group.public.id
+}
+
+#################################################################################################################
+# VIRTUAL MACHINE CUSTOM IMAGE (PASSWORD AUTH)
+#################################################################################################################
+
+module "ubuntu_vm_pass_auth_custom_image" {
+  source                    = "./modules/ubuntu-vm-password-auth-custom-image"
+  ip_configuration_name     = "pip-custom-pass-${var.prefix}"
+  network_interface_name    = "nic-custom-pass-${var.prefix}"
+  os_profile_admin_password = file("${path.root}/password.txt")
+  os_profile_admin_username = "razumovsky_r"
+  os_profile_computer_name  = "vm-custom-pass-${var.prefix}"
+  public_ip_name            = "pip-custom-pass-${var.prefix}"
+  resource_group_name       = azurerm_resource_group.public.name
+  resource_group_location   = azurerm_resource_group.public.location
+  storage_os_disk_name      = "osdisk-custom-pass-${var.prefix}"
+  subnet_id                 = azurerm_subnet.internal.id
+  vm_name                   = "vm-custom-pass-${var.prefix}"
+}
+
+resource "azurerm_network_interface_security_group_association" "ubuntu_vm_pass_auth_custom_image_nic_association" {
+  network_interface_id      = module.ubuntu_vm_pass_auth_custom_image.network_interface_id
   network_security_group_id = azurerm_network_security_group.public.id
 }

@@ -1,0 +1,20 @@
+output "public_ip" {
+  value = azurerm_public_ip.public.ip_address
+}
+
+output "public_ip_id" {
+  value = azurerm_public_ip.public.id
+}
+
+output "username" {
+  value = var.os_profile_admin_username
+}
+
+output "password" {
+  value     = var.os_profile_admin_password
+  sensitive = true
+}
+
+output "network_interface_id" {
+  value = azurerm_network_interface.public.id
+}
