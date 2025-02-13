@@ -24,3 +24,4 @@ and this project adheres to [Semantic Versioning v2.0.0](https://semver.org/spec
 - Add Custom image key auth module
 - Add Custom image pass auth module
 - Update readme
+- Add Custom image key auth no public ip module
