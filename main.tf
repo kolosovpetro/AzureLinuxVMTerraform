@@ -68,6 +68,27 @@ module "ubuntu_vm_custom_image_key_auth" {
 }
 
 #################################################################################################################
+# VIRTUAL MACHINE CUSTOM IMAGE (PUBLIC KEY AUTH) NO PIP
+#################################################################################################################
+
+# module "ubuntu_vm_custom_image_key_auth_no_pip" {
+#   source                           = "./modules/ubuntu-vm-key-auth-custom-image-no-pip"
+#   custom_image_resource_group_name = "rg-packer-images-linux"
+#   custom_image_sku                 = "ubuntu2204-v1"
+#   ip_configuration_name            = "ipc-custom-image-key2-${var.prefix}"
+#   network_interface_name           = "nic-custom-image-key2-${var.prefix}"
+#   os_profile_admin_public_key      = file("${path.root}/id_rsa.pub")
+#   os_profile_admin_username        = "razumovsky_r"
+#   os_profile_computer_name         = "vm-custom-image-key2-${var.prefix}"
+#   resource_group_location          = azurerm_resource_group.public.location
+#   resource_group_name              = azurerm_resource_group.public.name
+#   storage_os_disk_name             = "osdisk-custom-image-key2-${var.prefix}"
+#   subnet_id                        = azurerm_subnet.internal.id
+#   vm_name                          = "vm-custom-image-key2-${var.prefix}"
+#   network_security_group_id        = azurerm_network_security_group.public.id
+# }
+
+#################################################################################################################
 # VIRTUAL MACHINE (PASSWORD AUTH)
 #################################################################################################################
 
@@ -106,3 +127,22 @@ module "ubuntu_vm_pass_auth_custom_image" {
   vm_name                   = "vm-custom-pass-${var.prefix}"
   network_security_group_id = azurerm_network_security_group.public.id
 }
+
+#################################################################################################################
+# VIRTUAL MACHINE CUSTOM IMAGE (PASSWORD AUTH) NO PIP
+#################################################################################################################
+
+# module "ubuntu_vm_pass_auth_custom_image_no_pip" {
+#   source                    = "./modules/ubuntu-vm-password-auth-custom-image-no-pip"
+#   ip_configuration_name     = "pip-custom-pass2-${var.prefix}"
+#   network_interface_name    = "nic-custom-pass2-${var.prefix}"
+#   os_profile_admin_password = trimspace(file("${path.root}/password.txt"))
+#   os_profile_admin_username = "razumovsky_r"
+#   os_profile_computer_name  = "vm-custom-pass2-${var.prefix}"
+#   resource_group_name       = azurerm_resource_group.public.name
+#   resource_group_location   = azurerm_resource_group.public.location
+#   storage_os_disk_name      = "osdisk-custom-pass2-${var.prefix}"
+#   subnet_id                 = azurerm_subnet.internal.id
+#   vm_name                   = "vm-custom-pass2-${var.prefix}"
+#   network_security_group_id = azurerm_network_security_group.public.id
+# }
