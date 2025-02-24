@@ -26,3 +26,4 @@ and this project adheres to [Semantic Versioning v2.0.0](https://semver.org/spec
 - Update readme
 - Add Custom image key auth no public ip module
 - Add Custom image pass auth no public ip module
+- Add VM ID output

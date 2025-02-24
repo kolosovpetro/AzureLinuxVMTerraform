@@ -14,3 +14,7 @@ output "network_interface_id" {
 output "ip_configuration_name" {
   value = var.ip_configuration_name
 }
+
+output "id" {
+  value = azurerm_virtual_machine.public.id
+}
